@@ -1,1 +1,4 @@
-telegram-bot/.env
+.env
+__pycache__/
+*.pyc
+

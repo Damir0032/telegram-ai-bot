@@ -131,18 +131,22 @@ async def handle_ai_question(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await update.message.reply_text("🤖 Жауап дайындап жатырмын...")
 
         try:
+            # ChatGPT-ден жауап алу
             response = openai_client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "user", "content": question}]
             )
             answer = response.choices[0].message.content.strip()
 
-            # 🔘 Артқа батырмасы
+            # YouTube видеосын іздеу
+            youtube_url = get_youtube_video(question)
+            if youtube_url:
+                answer += f"\n\n📺 Байланысты видео: {youtube_url}"
+
             back_button = InlineKeyboardMarkup([
                 [InlineKeyboardButton("🔙 Артқа", callback_data='main_menu')]
             ])
 
-            # Жауапты жіберу
             if len(answer) <= 1000:
                 await update.message.reply_text(f"📚 Жауап:\n{answer}", reply_markup=back_button)
             else:
@@ -153,6 +157,7 @@ async def handle_ai_question(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text(f"⚠️ Кешіріңіз, қате кетті.\n{e}")
     else:
         await update.message.reply_text("Алдымен '🧠 Сұрақ қою (AI)' батырмасын басыңыз.")
+
 
 # YouTube видеосын алу
 def get_youtube_video(query):
